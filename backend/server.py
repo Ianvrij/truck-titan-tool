@@ -1,3 +1,6 @@
+from models.calculator import calculate_tco
+
+
 from flask import Flask, request, jsonify
 from calculations import calculate_tco, calculate_emissions, calculate_savings, calculate_subsidy
 
@@ -37,3 +40,21 @@ def calculate_savings_and_emissions():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+@app.route('/api/calculate', methods=['POST'])
+def calculate():
+    data = request.json
+    distance = data.get('distance')
+    fuel_price = 1.5  # Dummy value for fuel price
+    maintenance_cost = 1000  # Dummy cost for maintenance
+    insurance_cost = 500  # Dummy cost for insurance
+    
+    # Call the function from calculator.py
+    tco = calculate_tco(distance, fuel_price, maintenance_cost, insurance_cost)
+    
+    return jsonify({
+        "tco": tco,
+        "distance": distance
+    })
+
