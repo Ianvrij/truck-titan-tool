@@ -1,35 +1,22 @@
-document.getElementById('fleetForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    # Accept data sent to the server as JSON
+    data = request.get_json()
 
-    // Collect input data
-    const licensePlate = document.getElementById('licensePlate').value;
-    const distanceTraveled = parseFloat(document.getElementById('distanceTraveled').value);
-    const loadCapacity = parseFloat(document.getElementById('loadCapacity').value);
-    const truckLifetime = parseInt(document.getElementById('truckLifetime').value);
+    # Get data from the request (example fields)
+    distance = data.get('distance')  # Distance traveled in km
+    fuel_efficiency = data.get('fuel_efficiency')  # Fuel efficiency (liters per km)
+    emission_factor = data.get('emission_factor')  # CO2 emissions per liter of fuel (example)
 
-    // Send data to backend for processing (replace '/api/calculate' with your server endpoint)
-    const response = await fetch('/api/calculate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            licensePlate,
-            distanceTraveled,
-            loadCapacity,
-            truckLifetime
-        })
-    });
+    # Example calculation: fuel cost
+    fuel_cost_per_liter = 1.5  # Euro per liter of fuel (example value)
+    total_fuel_cost = distance * fuel_efficiency * fuel_cost_per_liter
+    
+    # Example CO2 emissions calculation (kg CO2)
+    total_emissions = distance * fuel_efficiency * emission_factor
 
-    if (response.ok) {
-        const result = await response.json();
-
-        // Display results
-        document.getElementById('savings').textContent = result.savings;
-        document.getElementById('emissionReduction').textContent = result.emissionReduction;
-        document.getElementById('subsidies').textContent = result.subsidies.join(', ');
-        document.getElementById('results').style.display = 'block';
-    } else {
-        alert('An error occurred while processing your request.');
-    }
-});
+    # Send the result back to the frontend
+    return jsonify({
+        'total_fuel_cost': total_fuel_cost,
+        'total_emissions': total_emissions
+    })
