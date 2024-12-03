@@ -1,30 +1,36 @@
-from flask import Flask, jsonify, request
-from models.calculator import calculate_tco  # Import your function
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+from calculator import calculate_savings, calculate_emissions, recommend_subsidies
 
 app = Flask(__name__)
 
+# Route to serve the frontend
 @app.route('/')
 def index():
-    return "Truck Titan Tool is running!"
+    return render_template('index.html')
 
+# Route to handle form submission and return calculations
 @app.route('/api/calculate', methods=['POST'])
 def calculate():
-    data = request.json
-    distance = data.get('distance')
-    load_capacity = data.get('load_capacity')
-
-    # Use the calculate_tco function from calculator.py
-    fuel_price = 1.5  # EUR per liter (dummy value)
-    maintenance_cost = 1000  # EUR per year
-    insurance_cost = 500  # EUR per year
-
-    tco = calculate_tco(distance, load_capacity, fuel_price, maintenance_cost, insurance_cost)
-
+    data = request.get_json()
+    
+    # Extract data from the request
+    license_plate = data['licensePlate']
+    distance_traveled = data['distanceTraveled']
+    load_capacity = data['loadCapacity']
+    truck_lifetime = data['truckLifetime']
+    
+    # Perform calculations
+    savings = calculate_savings(license_plate, distance_traveled, load_capacity, truck_lifetime)
+    emission_reduction = calculate_emissions(license_plate, distance_traveled)
+    subsidies = recommend_subsidies(license_plate)
+    
+    # Return results as JSON
     return jsonify({
-        "tco": tco,
-        "distance": distance,
-        "load_capacity": load_capacity
+        'savings': savings,
+        'emissionReduction': emission_reduction,
+        'subsidies': subsidies
     })
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
