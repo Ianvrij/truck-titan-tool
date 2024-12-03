@@ -1,20 +1,15 @@
 # Truck Titan Tool
 
-The Truck Titan Tool is a fleet management optimization tool aimed at reducing costs, improving efficiency, and minimizing emissions for logistics companies.
+The Truck Titan Tool helps truck operators calculate fuel savings, emission reductions, and available subsidies for adopting cleaner trucks.
 
 ## Features
-- Calculate cost savings and emission reductions.
-- Provide subsidy recommendations.
-- Compare vehicles and operational strategies.
 
-## Requirements
-- Python 3.x
-- Flask (for the backend)
-- Pandas (for data handling)
-- Openpyxl (for reading Excel data)
+- Calculate fuel savings based on distance traveled and fuel efficiency.
+- Calculate CO2 emissions based on fuel usage.
+- Get recommendations for available subsidies based on truck type.
 
-## Setup
-1. Clone the repository.
-2. Install dependencies:  
+## Installation
+
+1. Clone the repository:
    ```bash
-   pip install -r requirements.txt
+   git clone https://github.com/Ianvrij/truck-titan-tool.git
