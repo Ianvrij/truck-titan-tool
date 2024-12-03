@@ -1,34 +1,55 @@
-<p id="result"></p>
-<p id="emissions"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Titan Tool</title>
+</head>
+<body>
 
-<script>
-  function sendData() {
-    // Gather data from the inputs
-    const distance = document.getElementById('distance').value;
-    const fuelEfficiency = document.getElementById('fuel_efficiency').value;
-    const emissionFactor = 2.31;  // Example emission factor (kg CO2 per liter of fuel)
+    <h1>Truck Titan Tool</h1>
+    <form id="dataForm">
+        <label for="licensePlate">License Plate:</label>
+        <input type="text" id="licensePlate" name="licensePlate" required><br><br>
 
-    // Prepare the data to send to the backend
-    const data = {
-      distance: distance,
-      fuel_efficiency: fuelEfficiency,
-      emission_factor: emissionFactor
-    };
+        <label for="distanceTraveled">Distance Traveled (km):</label>
+        <input type="number" id="distanceTraveled" name="distanceTraveled" required><br><br>
 
-    // Send the data to the backend via a POST request
-    fetch('http://127.0.0.1:5000/calculate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-      // Show the result in the webpage
-      document.getElementById('result').innerText = 'Total Fuel Cost: €' + result.total_fuel_cost;
-      document.getElementById('emissions').innerText = 'Total CO2 Emissions: ' + result.total_emissions + ' kg';
-    })
-    .catch(error => console.error('Error:', error));
-  }
-</script>
+        <label for="loadCapacity">Load Capacity (kg):</label>
+        <input type="number" id="loadCapacity" name="loadCapacity" required><br><br>
+
+        <label for="truckLifetime">Truck Lifetime (years):</label>
+        <input type="number" id="truckLifetime" name="truckLifetime" required><br><br>
+
+        <button type="button" onclick="sendData()">Calculate</button>
+    </form>
+
+    <p id="result"></p>
+    <p id="emissions"></p>
+    <p id="subsidies"></p>
+
+    <script>
+        function sendData() {
+            // Gather data from the inputs
+            const licensePlate = document.getElementById('licensePlate').value;
+            const distanceTraveled = document.getElementById('distanceTraveled').value;
+            const loadCapacity = document.getElementById('loadCapacity').value;
+            const truckLifetime = document.getElementById('truckLifetime').value;
+
+            // Prepare the data to send to the backend
+            const data = {
+                licensePlate: licensePlate,
+                distanceTraveled: distanceTraveled,
+                loadCapacity: loadCapacity,
+                truckLifetime: truckLifetime
+            };
+
+            // Send the data to the backend via a POST request
+            fetch('/api/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response

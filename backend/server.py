@@ -1,26 +1,36 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+from calculator import calculate_savings, calculate_emissions, recommend_subsidies
 
 app = Flask(__name__)
 
+# Route to serve the frontend
 @app.route('/')
-def home():
-    return 'Truck Titan Tool Backend Running!'
+def index():
+    return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
+# Route to handle form submission and return calculations
+@app.route('/api/calculate', methods=['POST'])
 def calculate():
-    # Accept data sent to the server as JSON
     data = request.get_json()
-
-    # Get data from the request (example fields)
-    distance = data.get('distance')  # Distance traveled in km
-    fuel_efficiency = data.get('fuel_efficiency')  # Fuel efficiency (liters per km)
-
-    # Example calculation: fuel cost
-    fuel_cost_per_liter = 1.5  # Euro per liter of fuel (example value)
-    total_fuel_cost = distance * fuel_efficiency * fuel_cost_per_liter
-
-    # Send the result back to the frontend
-    return jsonify({'total_fuel_cost': total_fuel_cost})
+    
+    # Extract data from the request
+    license_plate = data['licensePlate']
+    distance_traveled = data['distanceTraveled']
+    load_capacity = data['loadCapacity']
+    truck_lifetime = data['truckLifetime']
+    
+    # Perform calculations
+    savings = calculate_savings(license_plate, distance_traveled, load_capacity, truck_lifetime)
+    emission_reduction = calculate_emissions(license_plate, distance_traveled)
+    subsidies = recommend_subsidies(license_plate)
+    
+    # Return results as JSON
+    return jsonify({
+        'savings': savings,
+        'emissionReduction': emission_reduction,
+        'subsidies': subsidies
+    })
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)  # Run the Flask app
+    app.run(debug=True)
