@@ -1,30 +1,26 @@
-from flask import Flask, jsonify, request
-from models.calculator import calculate_tco  # Import your function
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return "Truck Titan Tool is running!"
+def home():
+    return 'Truck Titan Tool Backend Running!'
 
-@app.route('/api/calculate', methods=['POST'])
+@app.route('/calculate', methods=['POST'])
 def calculate():
-    data = request.json
-    distance = data.get('distance')
-    load_capacity = data.get('load_capacity')
+    # Accept data sent to the server as JSON
+    data = request.get_json()
 
-    # Use the calculate_tco function from calculator.py
-    fuel_price = 1.5  # EUR per liter (dummy value)
-    maintenance_cost = 1000  # EUR per year
-    insurance_cost = 500  # EUR per year
+    # Get data from the request (example fields)
+    distance = data.get('distance')  # Distance traveled in km
+    fuel_efficiency = data.get('fuel_efficiency')  # Fuel efficiency (liters per km)
 
-    tco = calculate_tco(distance, load_capacity, fuel_price, maintenance_cost, insurance_cost)
+    # Example calculation: fuel cost
+    fuel_cost_per_liter = 1.5  # Euro per liter of fuel (example value)
+    total_fuel_cost = distance * fuel_efficiency * fuel_cost_per_liter
 
-    return jsonify({
-        "tco": tco,
-        "distance": distance,
-        "load_capacity": load_capacity
-    })
+    # Send the result back to the frontend
+    return jsonify({'total_fuel_cost': total_fuel_cost})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=False)  # Run the Flask app

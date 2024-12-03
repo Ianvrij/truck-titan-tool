@@ -1,39 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truck Titan Tool</title>
-    <link rel="stylesheet" href="static/styles.css">
-</head>
-<body>
-    <header>
-        <h1>Truck Titan Tool</h1>
-        <p>The Truck Titan Tool is a fleet management optimization tool aimed at reducing costs, improving efficiency, and minimizing emissions for logistics companies.</p>
-    </header>
+<p id="result"></p>
+<p id="emissions"></p>
 
-    <section>
-        <h2>Features</h2>
-        <ul>
-            <li>Calculate cost savings and emission reductions.</li>
-            <li>Provide subsidy recommendations.</li>
-            <li>Compare vehicles and operational strategies.</li>
-        </ul>
-    </section>
+<script>
+  function sendData() {
+    // Gather data from the inputs
+    const distance = document.getElementById('distance').value;
+    const fuelEfficiency = document.getElementById('fuel_efficiency').value;
+    const emissionFactor = 2.31;  // Example emission factor (kg CO2 per liter of fuel)
 
-    <section>
-        <h2>Requirements</h2>
-        <ul>
-            <li>Python 3.x</li>
-            <li>Flask (for the backend)</li>
-            <li>Pandas (for data handling)</li>
-            <li>Openpyxl (for reading Excel data)</li>
-        </ul>
-    </section>
+    // Prepare the data to send to the backend
+    const data = {
+      distance: distance,
+      fuel_efficiency: fuelEfficiency,
+      emission_factor: emissionFactor
+    };
 
-    <section>
-        <h2>Setup</h2>
-        <pre><code>Clone the repository.
-Install dependencies:
-```bash
-pip install -r requirements.txt
+    // Send the data to the backend via a POST request
+    fetch('http://127.0.0.1:5000/calculate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      // Show the result in the webpage
+      document.getElementById('result').innerText = 'Total Fuel Cost: €' + result.total_fuel_cost;
+      document.getElementById('emissions').innerText = 'Total CO2 Emissions: ' + result.total_emissions + ' kg';
+    })
+    .catch(error => console.error('Error:', error));
+  }
+</script>
