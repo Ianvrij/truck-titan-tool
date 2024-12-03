@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-import pandas as pd
 from calculator import calculate_savings, calculate_emissions, recommend_subsidies
 
 app = Flask(__name__)
