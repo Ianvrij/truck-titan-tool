@@ -1,0 +1,40 @@
+<script>
+    function sendData() {
+        // Gather data from the inputs
+        const licensePlate = document.getElementById('licensePlate').value;
+        const distanceTraveled = document.getElementById('distanceTraveled').value;
+        const loadCapacity = document.getElementById('loadCapacity').value;
+        const truckLifetime = document.getElementById('truckLifetime').value;
+
+        // Prepare the data to send to the backend
+        const data = {
+            licensePlate: licensePlate,
+            distanceTraveled: distanceTraveled,
+            loadCapacity: loadCapacity,
+            truckLifetime: truckLifetime
+        };
+
+        // Show a loading message or indication
+        document.getElementById('result').innerText = "Processing...";
+
+        // Send the data to the backend via a POST request
+        fetch('/api/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            // Display the results
+            document.getElementById('result').innerText = 'Savings: €' + result.savings;
+            document.getElementById('emissions').innerText = 'Emission Reduction: ' + result.emissionReduction + ' kg CO2';
+            document.getElementById('subsidies').innerText = 'Recommended Subsidies: ' + result.subsidies;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('result').innerText = 'An error occurred while processing your request.';
+        });
+    }
+</script>
